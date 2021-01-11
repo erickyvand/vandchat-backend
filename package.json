@@ -1,0 +1,37 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev-server": "nodemon --exec babel-node src/app.js",
+    "build": "babel src --out-dir production",
+    "start": "node production/app.js",
+    "test": "nyc mocha --require @babel/register src/tests/**/*.test.js --timeout 10000 --exit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/register": "^7.12.10",
+    "bcrypt": "^5.0.0",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "joi": "^17.3.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.11.8",
+    "socket.io": "^3.0.4"
+  },
+  "devDependencies": {
+    "faker": "^5.1.0",
+    "mocha": "^8.2.1",
+    "nyc": "^15.1.0"
+  }
+}
