@@ -11,7 +11,7 @@ import Chat from './models/chat';
 
 config();
 
-mongoose.connect(process.env.DATABASE_URL, {
+mongoose.connect(process.env.MONGODB_URI, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 });
@@ -37,7 +37,7 @@ app.use('/', (req, res) => {
 	return ResponseService.send(res);
 });
 
-const port = 4500 || process.env.PORT;
+const port = process.env.PORT || 4500;
 
 const server = app.listen(port, () => {
 	console.log(`App listening on port ${port}`);
@@ -46,6 +46,7 @@ const server = app.listen(port, () => {
 const io = socket(server, {
 	cors: {
 		origin: process.env.FRONTEND_URL,
+		methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
 	},
 });
 
@@ -57,7 +58,7 @@ io.use((socket, next) => {
 
 let users = [];
 io.on('connection', async socket => {
-	console.log('User connected:' + socket.id);
+	// console.log('User connected:' + socket.id);
 
 	const messages = await Chat.find({ message: { $ne: '' } });
 
@@ -68,9 +69,14 @@ io.on('connection', async socket => {
 
 		await UserService.updateUserByProperty({ _id: id }, { socket: users[id] });
 		const user = await UserService.findUserByProperty({ _id: socket.userId });
-		io.emit('online', user);
 
-		io.emit('connected_users', { id, name });
+		let userData;
+		if (user) {
+			userData = { ...user._doc };
+			delete userData.password;
+		}
+
+		io.emit('connected_users', userData);
 	});
 
 	socket.on('send_message', async data => {
